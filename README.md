@@ -1,4 +1,4 @@
-## RETO TÉCNICA - FullStack DEVELOPER
+## RETO TÉCNICO - FullStack DEVELOPER
 Este pequeño documento describe un desafío de programación que quisiéramos que nos ayudes a desarrollar, para conocer mejor tus habilidades y entender si tu conocimiento y experiencia son adecuados para lo que estamos buscando. 
 
 ### Requerimiento general:
