@@ -11,7 +11,7 @@ class LoginController extends Controller
 {
     public function login(Request $request) {
         $request->validate([
-            'email' => 'required',
+            'email' => ['required', 'email'],
             'password' => 'required',
         ]);
 
@@ -30,3 +30,4 @@ class LoginController extends Controller
         ], 401);
     }
 }
+// 6|EmtvEy93nWOaNNYE5R680aJcbdxaLsS1fx2QnvGWa79c16fd
