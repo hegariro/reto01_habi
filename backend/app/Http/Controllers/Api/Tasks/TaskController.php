@@ -70,17 +70,24 @@ class TaskController extends Controller
         ]);
         $this->existsTaskValidation($request, $id);
 
-        Task::find($id)
-            ->where('created_by', $request->createdBy()->id)
-            ->where('is_completed', false)
-            ->update([
-                'title' => $request->title,
-                'assigned_to' => $request->assigned_to,
-            ]);
-
-        return response()->json([
-            'message' => "Task '{$request->title}' was updated successfully!",
-        ], 200);
+        try {
+            Task::find($id)
+                ->where('created_by', $request->createdBy()->id)
+                ->where('is_completed', false)
+                ->update([
+                    'title' => $request->title,
+                    'assigned_to' => $request->assigned_to,
+                ]);
+    
+            return response()->json([
+                'message' => "Task '{$request->title}' was updated successfully!",
+            ], 200);
+        } catch(Throwable $e) {
+            report($e);
+            return response()->json([
+                'message' => "The task was not found or it was not posible remove"
+            ], 400);
+        }
     }
 
     /**
@@ -90,14 +97,21 @@ class TaskController extends Controller
     {
         $this->existsTaskValidation($request, $id);
 
-        Task::find($id)
-            ->where('created_by', $request->user()->id)
-            ->where('is_completed', false)
-            ->update(['assigned_to' => $request->assigned_to]);
+        try {
+            Task::find($id)
+                ->where('created_by', $request->user()->id)
+                ->where('is_completed', false)
+                ->update(['assigned_to' => $request->assigned_to]);
 
-        return response()->json([
-            'message' => "Task '{$id}' was updated successfully!",
-        ], 200);
+            return response()->json([
+                'message' => "Task '{$id}' was updated successfully!",
+            ], 200);
+        } catch(Throwable $e) {
+            report($e);
+            return response()->json([
+                'message' => "The task was not found or it was not posible update"
+            ], 400);
+        }
     }
 
     /**
@@ -115,13 +129,20 @@ class TaskController extends Controller
             ], 400);
         }
 
-        Task::find($id)
-            ->where('assigned_to', $request->user()->id)
-            ->update([ 'is_completed' => $request->is_completed ]);
-
+        try {
+            Task::find($id)
+                ->where('assigned_to', $request->user()->id)
+                ->update([ 'is_completed' => $request->is_completed ]);
+            
             return response()->json([
                 'message' => "Task '{$id}' was updated successfully!",
             ], 200);
+        } catch(Throwable $e) {
+            report($e);
+            return response()->json([
+                'message' => "The task was not found or it was not possible update"
+            ], 400);
+        }
     }
 
     /**
@@ -129,7 +150,19 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            Task::find($id)
+                ->where('created_by', $request->user()->id)
+                ->where('is_completed', false)
+                ->delete();
+            
+                return response()->json([], 204);
+        } catch(Throwable $e) {
+            report($e);
+            return response()->json([
+                'message' => "The task was not found or it was not possible remove"
+            ], 400);
+        }
     }
 
     private function existsTaskValidation(Request $request, string $id) {
