@@ -9,7 +9,19 @@ class Task extends Model
 {
     use HasFactory;
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function createdBy() {
+        return $this->belongsTo(User::class, 'created_by')
+        ->withDefault([
+            'name' => "",
+            'email' => "",
+        ]);
+    }
+
+    public function assignedTo() {
+        return $this->belongsTo(User::class, 'assigned_to')
+            ->withDefault([
+                'name' => "",
+                'email' => "",
+            ]);
     }
 }

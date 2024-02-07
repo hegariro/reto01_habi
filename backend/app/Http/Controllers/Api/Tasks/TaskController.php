@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\Tasks;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Http\Resources\Tasks\TaskResource;
+use App\Models\Task;
+
 class TaskController extends Controller
 {
     /**
@@ -12,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        return TaskResource::collection(Task::latest()->paginate());
     }
 
     /**
