@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Models\User;
+use App\Http\Resources\Users\UserResource;
+
 class UserController extends Controller
 {
     /**
@@ -12,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        return UserResource::collection(User::latest()->paginate());
     }
 
     /**
@@ -20,6 +23,6 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return new UserResource(User::find($id));
     }
 }

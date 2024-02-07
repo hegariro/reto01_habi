@@ -8,32 +8,25 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Tasks\TaskResource;
 use App\Models\Task;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index() {
         return TaskResource::collection(Task::latest()->paginate());
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'created_by' => 'required',
             'assigned_to' => 'required',
         ]);
-        if (!User::find($request->created_by)) {
-            return response()->json([
-                'message' => 'Author was not found'
-            ], 400);
-        }
         if (!User::find($request->assigned_to)) {
             return response()->json([
                 'message' => 'User assigned was not found'
@@ -42,7 +35,7 @@ class TaskController extends Controller
 
         $task = Task::create([
             'title' => $request->title,
-            'created_by' => $request->created_by,
+            'created_by' => Auth::id(),
             'assigned_to' => $request->assigned_to,
             'is_completed' => false,
         ]);
@@ -55,8 +48,7 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
+    public function show(string $id) {
         return new TaskResource(Task::find($id));
     }
 
@@ -71,8 +63,8 @@ class TaskController extends Controller
         $this->existsTaskValidation($request, $id);
 
         try {
-            Task::find($id)
-                ->where('created_by', $request->createdBy()->id)
+            Task::where('id', $id)
+                ->where('created_by', Auth::id())
                 ->where('is_completed', false)
                 ->update([
                     'title' => $request->title,
@@ -85,7 +77,7 @@ class TaskController extends Controller
         } catch(Throwable $e) {
             report($e);
             return response()->json([
-                'message' => "The task was not found or it was not posible remove"
+                'message' => "The task was not found or it was not possible update"
             ], 400);
         }
     }
@@ -98,8 +90,8 @@ class TaskController extends Controller
         $this->existsTaskValidation($request, $id);
 
         try {
-            Task::find($id)
-                ->where('created_by', $request->user()->id)
+            Task::where('id', $id)
+                ->where('created_by', Auth::id())
                 ->where('is_completed', false)
                 ->update(['assigned_to' => $request->assigned_to]);
 
@@ -109,7 +101,7 @@ class TaskController extends Controller
         } catch(Throwable $e) {
             report($e);
             return response()->json([
-                'message' => "The task was not found or it was not posible update"
+                'message' => "The task was not found or it was not possible update"
             ], 400);
         }
     }
@@ -117,7 +109,7 @@ class TaskController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function toCompleteRequest ($request, string $id)
+    public function toComplete (Request $request, string $id)
     {
         $request->validate([
             'is_completed' => ['required', 'boolean'],
@@ -130,9 +122,12 @@ class TaskController extends Controller
         }
 
         try {
-            Task::find($id)
-                ->where('assigned_to', $request->user()->id)
-                ->update([ 'is_completed' => $request->is_completed ]);
+            Task::where('id', $id)
+                ->where('assigned_to', Auth::id())
+                ->update([
+                    'is_completed' => $request->is_completed,
+                    'task_completed_date' => now(),
+                ]);
             
             return response()->json([
                 'message' => "Task '{$id}' was updated successfully!",
@@ -151,8 +146,8 @@ class TaskController extends Controller
     public function destroy(string $id)
     {
         try {
-            Task::find($id)
-                ->where('created_by', $request->user()->id)
+            Task::where('id', $id)
+                ->where('created_by', Auth::id())
                 ->where('is_completed', false)
                 ->delete();
             
@@ -177,7 +172,7 @@ class TaskController extends Controller
             ], 400);
         }
         $task = Task::find($id)
-            ->where('created_by', $request->user()->id)
+            ->where('created_by', Auth::id())
             ->where('is_completed', false);
         if (!$task) {
             return response()->json([
