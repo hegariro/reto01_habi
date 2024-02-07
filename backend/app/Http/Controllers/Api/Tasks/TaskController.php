@@ -24,19 +24,21 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$request->created_by || !User::find($request->created_by)) {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'created_by' => 'required',
+            'assigned_to' => 'required',
+        ]);
+        if (!User::find($request->created_by)) {
             return response()->json([
                 'message' => 'Author was not found'
             ], 400);
         }
-        if (!$request->assigned_to || !User::find($request->assigned_to)) {
+        if (!User::find($request->assigned_to)) {
             return response()->json([
                 'message' => 'User assigned was not found'
             ], 400);
         }
-        $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-        ]);
 
         $task = Task::create([
             'title' => $request->title,
@@ -63,7 +65,22 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+        $this->existsTaskValidation($request, $id);
+
+        Task::find($id)
+            ->where('created_by', $request->createdBy()->id)
+            ->where('is_completed', false)
+            ->update([
+                'title' => $request->title,
+                'assigned_to' => $request->assigned_to,
+            ]);
+
+        return response()->json([
+            'message' => "Task '{$request->title}' was updated successfully!",
+        ], 200);
     }
 
     /**
@@ -71,7 +88,16 @@ class TaskController extends Controller
      */
     public function assign(Request $request, string $id)
     {
-        //
+        $this->existsTaskValidation($request, $id);
+
+        Task::find($id)
+            ->where('created_by', $request->user()->id)
+            ->where('is_completed', false)
+            ->update(['assigned_to' => $request->assigned_to]);
+
+        return response()->json([
+            'message' => "Task '{$id}' was updated successfully!",
+        ], 200);
     }
 
     /**
@@ -79,7 +105,23 @@ class TaskController extends Controller
      */
     public function toCompleteRequest ($request, string $id)
     {
-        //
+        $request->validate([
+            'is_completed' => ['required', 'boolean'],
+            'assigned_to' => 'required',
+        ]);
+        if (!User::find($request->assigned_to)) {
+            return response()->json([
+                'message' => 'User assigned was not found'
+            ], 400);
+        }
+
+        Task::find($id)
+            ->where('assigned_to', $request->user()->id)
+            ->update([ 'is_completed' => $request->is_completed ]);
+
+            return response()->json([
+                'message' => "Task '{$id}' was updated successfully!",
+            ], 200);
     }
 
     /**
@@ -88,5 +130,26 @@ class TaskController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function existsTaskValidation(Request $request, string $id) {
+        $request->validate([
+            'created_by' => 'required',
+            'assigned_to' => 'required',
+        ]);
+
+        if (!User::find($request->assigned_to)) {
+            return response()->json([
+                'message' => 'User assigned was not found'
+            ], 400);
+        }
+        $task = Task::find($id)
+            ->where('created_by', $request->user()->id)
+            ->where('is_completed', false);
+        if (!$task) {
+            return response()->json([
+                'message' => "Task {$id} was not found or was completed!"
+            ], 404);
+        }
     }
 }

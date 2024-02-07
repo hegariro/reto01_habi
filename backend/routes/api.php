@@ -19,7 +19,8 @@ Route::get('users/{id}', [User::class, 'show'])->middleware('auth:sanctum');
 // Tasks
 Route::get('tasks', [Task::class, 'index'])->middleware('auth:sanctum');
 Route::get('tasks/{id}', [Task::class, 'show'])->middleware('auth:sanctum');
-Route::post('task/new', [Task::class, 'store'])->middleware('auth:sanctum');
-Route::patch('task/{id}/assign', [Task::class, 'assign'])->middleware('auth:sanctum');
-Route::patch('task/{id}/to-complete', [Task::class, 'toComplete'])->middleware('auth:sanctum');
+Route::post('tasks/new', [Task::class, 'store'])->middleware('auth:sanctum');
+Route::put('tasks/{id}', [Task::class, 'destroy'])->middleware('auth:sanctum');
+Route::patch('tasks/{id}/assign', [Task::class, 'assign'])->middleware('auth:sanctum');
+Route::patch('tasks/{id}/to-complete', [Task::class, 'toComplete'])->middleware('auth:sanctum');
 Route::delete('tasks/{id}', [Task::class, 'destroy'])->middleware('auth:sanctum');
