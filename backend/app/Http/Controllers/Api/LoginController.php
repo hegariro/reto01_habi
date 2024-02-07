@@ -29,5 +29,13 @@ class LoginController extends Controller
             "message" => "User {$request->email} not authorized"
         ], 401);
     }
+
+    public function logout(Request $request) {
+        $user = $request->user();
+        $user->tokens()->delete();
+        return response()->json([
+            "message" => "Tokens of user {$user->name} was deleted"
+        ], 200);
+    }
 }
 // 6|EmtvEy93nWOaNNYE5R680aJcbdxaLsS1fx2QnvGWa79c16fd
