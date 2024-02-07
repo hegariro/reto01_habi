@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Resources\Tasks\TaskResource;
 use App\Models\Task;
+use App\Models\User;
 
 class TaskController extends Controller
 {
@@ -23,7 +24,30 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        if (!$request->created_by || !User::find($request->created_by)) {
+            return response()->json([
+                'message' => 'Author was not found'
+            ], 400);
+        }
+        if (!$request->assigned_to || !User::find($request->assigned_to)) {
+            return response()->json([
+                'message' => 'User assigned was not found'
+            ], 400);
+        }
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+        ]);
+
+        $task = Task::create([
+            'title' => $request->title,
+            'created_by' => $request->created_by,
+            'assigned_to' => $request->assigned_to,
+            'is_completed' => false,
+        ]);
+
+        return response()->json([
+            'message' => "Task '{$task->title}' was created successfully!",
+        ], 201);
     }
 
     /**

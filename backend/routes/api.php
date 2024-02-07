@@ -14,6 +14,7 @@ Route::delete('logout', [Login::class, 'logout'])->middleware('auth:sanctum');
 
 // Users
 Route::get('users', [User::class, 'index'])->middleware('auth:sanctum');
+Route::get('users/{id}', [User::class, 'show'])->middleware('auth:sanctum');
 
 // Tasks
 Route::get('tasks', [Task::class, 'index'])->middleware('auth:sanctum');
