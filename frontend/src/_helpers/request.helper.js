@@ -33,12 +33,12 @@ const request = (method) => {
 
 const getHeaders = (url) => {
     const { user } = useAuthStore();
-    const isLoggedIn = !!user?.accessToken;
+    const isLoggedIn = !!user?.token;
     const isApiUrl = url.startsWith(_API_BASE_URL);
     if (isLoggedIn && isApiUrl) {
         return {
             'Accept': 'application/json',
-            'Authorization': `Bearer ${user.accessToken}`
+            'Authorization': `Bearer ${user.token}`
         };
     } else {
         return {};
@@ -50,7 +50,7 @@ const handleResponse = async (res) => {
     const data = isJSON ? await res.json() : null;
     if (!res.ok) {
         const { user, logout } = useAuthStore();
-        if ([401, 403].includes(res.status) && user) logout();
+        if ([401, 403].includes(res.status) && !!user) logout();
 
         const err = (data && data.message) || res.status;
         return Promise.reject(err);

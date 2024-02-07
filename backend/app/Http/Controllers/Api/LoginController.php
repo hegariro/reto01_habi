@@ -31,7 +31,7 @@ class LoginController extends Controller
     }
 
     public function logout(Request $request) {
-        $user = $request->user();
+        $user = Auth::user();
         $user->tokens()->delete();
         return response()->json([
             "message" => "Tokens of user {$user->name} was deleted"
