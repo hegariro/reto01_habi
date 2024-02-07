@@ -1,4 +1,4 @@
-import { useAuthStore } from "../store/auth/auth.store";
+import { useAuthStore } from "../stores/auth/auth.store";
 
 const _GET = 'get';
 const _POST = 'post';
@@ -7,15 +7,7 @@ const _PATCH = 'patch';
 const _DELETE = 'delete';
 const _API_BASE_URL = `${import.meta.env.VITE_BACKEND_URL_BASE}`;
 
-const requestClient = {
-    get: request(_GET),
-    post: request(_POST),
-    put: request(_PUT),
-    patch: request(_PATCH),
-    delete: request(_DELETE),
-};
-
-const request = (method) => {
+const req = (method) => {
     return (url, body) => {
         const requestOptions = {
             method,
@@ -55,6 +47,14 @@ const handleResponse = async (res) => {
         const err = (data && data.message) || res.status;
         return Promise.reject(err);
     }
+};
+
+const requestClient = {
+    get: req(_GET),
+    post: req(_POST),
+    put: req(_PUT),
+    patch: req(_PATCH),
+    delete: req(_DELETE),
 };
 
 export { requestClient };
