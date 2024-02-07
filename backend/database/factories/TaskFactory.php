@@ -19,7 +19,6 @@ class TaskFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'created_by' => rand(1, 10),
-            'assigned_to' => rand(1, 10),
             'is_completed' => false,
         ];
     }

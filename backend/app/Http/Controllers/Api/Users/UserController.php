@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\Tasks;
+namespace App\Http\Controllers\Api\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class TaskController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -35,22 +35,6 @@ class TaskController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function assign(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function toCompleteRequest ($request, string $id)
     {
         //
     }

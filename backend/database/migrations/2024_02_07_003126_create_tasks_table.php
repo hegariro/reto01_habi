@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('assigned_to');
+            $table->unsignedBigInteger('assigned_to')->nullable();
             $table->boolean('is_completed');
             $table->dateTime('task_completed_date', $precision = 0)->nullable();
             $table->timestamps();
