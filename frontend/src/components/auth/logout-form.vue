@@ -1,5 +1,3 @@
-
-import { errorMessages } from 'vue/compiler-sfc';
 <template>
   <div class="card text-dark bg-warning mb-3" style="max-width: 18rem;">
     <div class="card-header">Cierre de sesi&oacute;n</div>
@@ -16,10 +14,12 @@ import { errorMessages } from 'vue/compiler-sfc';
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { router } from '../../router';
 import { useAuthStore } from '../../stores/auth/auth.store';
 
-const logout = async () => {
+
+const logout = computed(async () => {
   let page = 'all-tasks';
   const authStore = useAuthStore();
   try {
@@ -31,7 +31,7 @@ const logout = async () => {
     // TODO Agregar notificación
     router.push({ name: page });
   }
-};
+});
 </script>
 
 <style scoped></style>

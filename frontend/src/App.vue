@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from 'vue-router';
+import HelloWorld from './components/HelloWorld.vue';
 import { useAuthStore } from './stores/auth/auth.store';
 
 const authStore = useAuthStore();

@@ -21,6 +21,7 @@ class LoginController extends Controller
                 ->plainTextToken;
             return response()->json([
                 'token' => $token,
+                'email' => $request->email,
                 'message' => 'Login successfully'
             ], 200);
         }
@@ -38,4 +39,3 @@ class LoginController extends Controller
         ], 200);
     }
 }
-// 6|EmtvEy93nWOaNNYE5R680aJcbdxaLsS1fx2QnvGWa79c16fd

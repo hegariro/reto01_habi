@@ -3,10 +3,10 @@ import { defineStore } from "pinia";
 import { requestClient } from "../../_helpers/request.helper";
 
 const baseUrlAuth = `${import.meta.env.VITE_BACKEND_URL_BASE}`;
-const _LOCALSTORAGE_KEY_LOGIN = 'auth';
+const _LOCALSTORAGE_KEY_AUTH = 'auth';
 
 const useAuthStore = defineStore('auth', () => {
-  const initialUserValue = JSON.parse(localStorage.getItem(_LOCALSTORAGE_KEY_LOGIN)) || {};
+  const initialUserValue = JSON.parse(localStorage.getItem(_LOCALSTORAGE_KEY_AUTH)) || {};
   const user = ref(initialUserValue);
   const errors = ref([]);
 
@@ -17,12 +17,12 @@ const useAuthStore = defineStore('auth', () => {
         `${baseUrlAuth}/login`,
         { email, password }
       );
-      const {status, data: { token, message }} = apiResponse;
+      const {status, data: { token, email: emailBack, message }} = apiResponse;
       statusLog = status;
       messageLog = message;
       
-      user.value = { token };
-      localStorage.setItem(_LOCALSTORAGE_KEY_LOGIN, JSON.stringify(user.value));
+      user.value = { token, email: emailBack };
+      localStorage.setItem(_LOCALSTORAGE_KEY_AUTH, JSON.stringify(user.value));
     } catch (err) {
       console.error('Error', { err });
     } finally {
@@ -63,7 +63,7 @@ const useAuthStore = defineStore('auth', () => {
       const res = await requestClient.delete(
         `${baseUrlAuth}/logout`,
       );
-      localStorage.removeItem(_LOCALSTORAGE_KEY_LOGIN);
+      localStorage.removeItem(_LOCALSTORAGE_KEY_AUTH);
       user.value = {};
       // TODO add user notification
       errors.value.unshift({
@@ -77,8 +77,9 @@ const useAuthStore = defineStore('auth', () => {
 
   const isUserLoggedIn = computed(() => (!!user.value?.token));
   const getLastStatus = computed(() => (errors.value[0]));
+  const validateEmail = computed(() => ((email) => user.value.email === email));
 
-  return { user, login, register, logout, isUserLoggedIn, getLastStatus };
+  return { user, login, register, logout, isUserLoggedIn, getLastStatus, validateEmail };
 });
 
 export { useAuthStore };
