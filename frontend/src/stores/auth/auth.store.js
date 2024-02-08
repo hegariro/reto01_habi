@@ -77,7 +77,11 @@ const useAuthStore = defineStore('auth', () => {
 
   const isUserLoggedIn = computed(() => (!!user.value?.token));
   const getLastStatus = computed(() => (errors.value[0]));
-  const validateEmail = computed(() => ((email) => user.value.email === email));
+  const validateEmail = computed(() => (email) => {
+    const result = (email === user.value.email)
+    console.debug({result});
+    return result;
+  });
 
   return { user, login, register, logout, isUserLoggedIn, getLastStatus, validateEmail };
 });
