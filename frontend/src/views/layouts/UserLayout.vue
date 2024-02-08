@@ -2,9 +2,9 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/store/auth/auth.store';
-import { router } from '@/routes';
+import { useAuthStore } from '../../stores/auth/auth.store';
+import { router } from '../../router';
 
 const authStore = useAuthStore();
-!authStore.isUserLoggedIn() && router.push({ name: 'login' });
+!authStore.isUserLoggedIn && router.push({ name: 'login' });
 </script>

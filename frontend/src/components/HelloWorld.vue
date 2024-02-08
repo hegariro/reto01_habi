@@ -1,21 +1,29 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth/auth.store';
 defineProps({
   msg: {
     type: String,
     required: true
   }
 })
+const authStore = useAuthStore();
+const { isUserLoggedIn } = authStore;
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
-    </h3>
-  </div>
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" style="color: var(--color-text)">{{ msg }}</a>
+    <div v-show="isUserLoggedIn">
+      <form class="form-inline">
+        <input class="form-control mr-sm-2" type="search" 
+          placeholder="Search" aria-label="Search"
+        />
+        <button type="button" class="btn btn-outline-success my-2 my-sm-0">
+          Search
+        </button>
+      </form>
+    </div>
+  </nav>
 </template>
 
 <style scoped>
