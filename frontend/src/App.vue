@@ -18,8 +18,8 @@ const isLogged = computed(() => authStore.isUserLoggedIn);
     </div>
     <div class="col" v-else>
       <router-link :to="{ name: 'all-tasks' }">Tareas</router-link>
-      <!-- <router-link :to="{ name: 'users' }">Usuarios</router-link>
-      <router-link :to="{ name: 'logout' }">Cerrar sesi&oacute;n</router-link> -->
+      <!-- <router-link :to="{ name: 'users' }">Usuarios</router-link> -->
+      <router-link :to="{ name: 'logout' }">Cerrar sesi&oacute;n</router-link>
     </div>
   </header>
 

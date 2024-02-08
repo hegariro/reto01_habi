@@ -52,8 +52,9 @@ const onSubmit = async (values) => {
   let page = 'register';
   try {
     await authStore.register(values);
-    if (authStore.isUserLoggedIn) page = 'login';
-    else throw new Error(authStore.getLastStatus);
+    const lastStatus = await authStore.getLastStatus;
+    if (lastStatus.status == 201) page = 'login';
+    else throw new Error(lastStatus);
   } catch (err) {
     console.error(err);
   } finally {

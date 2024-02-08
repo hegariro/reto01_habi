@@ -36,11 +36,15 @@ const useAuthStore = defineStore('auth', () => {
   };
 
   const register = async ({ email, password, name }) => {
+    let statusLog, messageLog;
     try {
-      await requestClient.post(
+      const apiResponse = await requestClient.post(
         `${baseUrlAuth}/register`,
         { email, password, name }
       );
+      const {status, data: { message }} = apiResponse;
+      statusLog = status;
+      messageLog = message;
     } catch (err) {
       console.error('Error', { err });
     } finally {
@@ -60,7 +64,7 @@ const useAuthStore = defineStore('auth', () => {
         `${baseUrlAuth}/logout`,
       );
       localStorage.removeItem(_LOCALSTORAGE_KEY_LOGIN);
-      this.user = {};
+      user.value = {};
       // TODO add user notification
       errors.value.unshift({
         status: statusLog,
