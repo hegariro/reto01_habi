@@ -11,7 +11,7 @@
     <td>{{ taskStatus(task) }}</td>
     <td>
       <div v-show="canDelete(task)">
-        <button type="button" class="btn btn-danger" @click="deleteTask(task.id)">
+        <button type="button" class="btn btn-danger" @click="handleDeleteTask(task.id)">
           Eliminar tarea
         </button>
       </div>
@@ -30,6 +30,7 @@ import { useAuthStore } from '../../stores/auth/auth.store';
 
 const authStore = useAuthStore();
 const props = defineProps(['task']);
+const emit = defineEmits(['delete-task']);
 const task = computed(() => (props.task));
 
 const formatDate = (dateString) => {
@@ -46,4 +47,5 @@ const taskStatus = (info) => {
 };
 const canDelete = (info) => (authStore.validateEmail(info.author.email) && !info.assigned_to?.email);
 const canCheckedabled = (info) => (authStore.validateEmail(info.assigned_to.email) && !info.is_completed);
+const handleDeleteTask = (taskId) => (emit('delete-task', { taskId }));
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-show="!!tasks.length" class="container">
     <table class="table table-sm table-striped table-dark">
       <thead>
         <tr>
@@ -13,7 +13,12 @@
         </tr>
       </thead>
       <tbody>
-        <TaskDetailTable v-for="task in tasks" :key="task.id" :task="task" />
+        <TaskDetailTable
+          v-for="task in tasks"
+          :key="task.id"
+          :task="task"
+          @delete-task="deleteTask"
+        />
       </tbody>
     </table>
     <PageLinks :links />
@@ -21,11 +26,16 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useTaskStore } from '../../stores/task/task.store';
 import TaskDetailTable from './task-detail-table.vue';
 import PageLinks from './page-links.vue';
 
-const props = defineProps(['tasks', 'pageData']);
-const tasks = computed(() => (props.tasks || []));
-const links = computed(() => (props.pageData?.links || []));
+const taskStore = useTaskStore();
+const tasks = computed(() => taskStore.getAllTasks);
+const links = computed(() => taskStore.pages);
+
+onMounted(() => (taskStore.setAllTasks()));
+
+const deleteTask = ({ taskId }) => taskStore.deleteTask(taskId);
 </script>
