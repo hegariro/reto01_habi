@@ -75,9 +75,39 @@ const useTaskStore = defineStore('task', () => {
     }
   };
 
+  const assignTaskToUser = async ({taskId, userId}) => {
+    let statusLog, messageLog;
+    try {
+      const apiRes = await requestClient.patch(`${baseUrlTasks}/tasks/${taskId}/assign`,{
+        assigned_to: userId,
+      });
+      const { data: dataRes, status, ok } = apiRes;
+      statusLog = status;
+      messageLog = (dataRes?.message || '');
+
+      if ([200, 201, 204].includes(status)) {
+        const {data: dtr, ok} = await requestClient.get(`${baseUrlTasks}/tasks/${taskId}`);
+        const taskSrv = ok ? { ...dtr } : null;
+        for (let x in tasks.value) {
+          if (!!taskSrv && tasks.value[x].id == taskSrv.id) {
+            tasks.value[x] = taskSrv;
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      console.error({err});
+    } finally {
+      errors.value.unshift({
+        status: statusLog, message: messageLog, action: 'SetAllTasks',
+        datelog: (new Date()).toISOString()
+      });
+    }
+  };
+
   const getAllTasks = computed(() => (Object.values(tasks.value)));
 
-  return { pages, setAllTasks, getAllTasks, deleteTask };
+  return { pages, setAllTasks, getAllTasks, deleteTask, assignTaskToUser };
 });
 
 export { useTaskStore };

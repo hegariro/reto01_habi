@@ -90,10 +90,13 @@ class TaskController extends Controller
         $this->existsTaskValidation($request, $id);
 
         try {
-            Task::where('id', $id)
-                ->where('created_by', Auth::id())
-                ->where('is_completed', false)
-                ->update(['assigned_to' => $request->assigned_to]);
+            $row = Task::where('is_completed', false)
+              ->where('created_by', Auth::id())
+              ->where('id', $id)
+              ->first();
+
+            $row->assigned_to = $request->assigned_to;
+            $row->save();
 
             return response()->json([
                 'message' => "Task '{$id}' was updated successfully!",
@@ -162,7 +165,6 @@ class TaskController extends Controller
 
     private function existsTaskValidation(Request $request, string $id) {
         $request->validate([
-            'created_by' => 'required',
             'assigned_to' => 'required',
         ]);
 
