@@ -10,7 +10,7 @@ use App\Http\Controllers\Api\Users\UserController as User;
 
 Route::post('register', [Register::class, 'register']);
 Route::post('login', [Login::class, 'login']);
-Route::delete('logout', [Login::class, 'logout'])->middleware('auth:sanctum');
+Route::delete('logout', [Login::class, 'logout']);
 
 // Users
 Route::get('users', [User::class, 'index'])->middleware('auth:sanctum');

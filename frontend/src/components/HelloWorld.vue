@@ -1,19 +1,11 @@
 <script setup>
-import { useAuthStore } from '@/stores/auth/auth.store';
-defineProps({
-  msg: {
-    type: String,
-    required: true
-  }
-})
-const authStore = useAuthStore();
-const { isUserLoggedIn } = authStore;
+defineProps({ msg: { type: String, required: true } });
 </script>
 
 <template>
   <nav class="navbar navbar-dark bg-dark">
     <a class="navbar-brand" style="color: var(--color-text)">{{ msg }}</a>
-    <div v-show="isUserLoggedIn">
+    <div>
       <form class="form-inline">
         <input class="form-control mr-sm-2" type="search" 
           placeholder="Search" aria-label="Search"

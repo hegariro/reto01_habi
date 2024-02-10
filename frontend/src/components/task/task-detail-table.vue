@@ -3,8 +3,8 @@
     <th scope="row">{{ task.id }}</th>
     <td>{{ task.title }}</td>
     <td>{{ formatDate(task.published_at) }}</td>
-    <td>{{ task.author.name }} {{ task.author.email }}</td>
-    <td v-if="wasAssigned(task)">{{ task.assigned_to.name }} {{ task.assigned_to.email }}</td>
+    <td>{{ task?.author?.name }} {{ task?.author?.email }}</td>
+    <td v-if="wasAssigned(task)">{{ task?.assigned_to?.name }} {{ task?.assigned_to?.email }}</td>
     <td v-else-if="canAssignable(task)">
       <button type="button" class="btn btn-primary" @click="handleResponsible(task.id)">
         Asignar tarea
@@ -37,7 +37,7 @@ const emit = defineEmits(['delete-task', 'select-responsible']);
 const task = computed(() => (props.task));
 
 const formatDate = (dateString) => {
-  return Intl.DateTimeFormat('en-GB', {
+  return !!dateString && Intl.DateTimeFormat('en-GB', {
     year: "numeric", month: "numeric", day: "numeric", hour: "numeric",
     minute: "numeric", second: "numeric", hour12: false,
   }).format(Date.parse(dateString));
@@ -49,8 +49,8 @@ const taskStatus = (info) => {
   else if (!!info.assigned_to?.email) return 'Tarea asignada';
   return 'Tarea sin asignar';
 };
-const canDelete = (info) => (authStore.validateEmail(info.author.email) && !info.assigned_to?.email);
-const canCheckedabled = (info) => (authStore.validateEmail(info.assigned_to.email) && !info.is_completed);
+const canDelete = (info) => (authStore.validateEmail(info?.author?.email) && !info?.assigned_to?.email);
+const canCheckedabled = (info) => (authStore.validateEmail(info?.assigned_to?.email) && !info.is_completed);
 const handleDeleteTask = (taskId) => (emit('delete-task', { taskId }));
 const handleResponsible = (taskId) => (emit('select-responsible', { taskId }));
 </script>

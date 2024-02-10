@@ -22,7 +22,7 @@
         />
       </tbody>
     </table>
-    <PageLinks :links />
+    <PageLinks :links="links" />
     <Modal :modalActive v-show="!!modalActive">
       <template #header>Asignaci&oacute;n de tareas</template>
       <template #header-close>
@@ -48,17 +48,18 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
+import { router } from '../../router';
 import { useTaskStore } from '../../stores/task/task.store';
 import { useUserStore } from '../../stores/user/user.store';
-import TaskDetailTable from './task-detail-table.vue';
-import PageLinks from './page-links.vue';
-import UserCard from '../user/user-card.vue';
 import Modal from '../modal/modal.vue';
+import PageLinks from './page-links.vue';
+import TaskDetailTable from './task-detail-table.vue';
+import UserCard from '../user/user-card.vue';
 
 const taskStore = useTaskStore();
 const userStore = useUserStore();
 const tasks = computed(() => taskStore.getAllTasks);
-const links = computed(() => taskStore.pages);
+const links = computed(() => taskStore.getLinks);
 const users = computed(() => userStore.getAllUsers);
 const modalActive = ref(false);
 const selectedData = ref({});
@@ -71,14 +72,14 @@ const toggleModal = ({ taskId }) => {
 };
 const selectUser = (userId) => {
   const taskId = selectedData.value.task;
-  console.debug({taskId});
   taskStore.assignTaskToUser({taskId, userId});
   modalActive.value = false;
+  // router.push({ name: 'all-tasks' });
 };
 
-onMounted(async () => {
-  await taskStore.setAllTasks();
-  await userStore.setAllUsers();
+onMounted(() => {
+  taskStore.setAllTasks(taskStore.getCurrentPage);
+  userStore.setAllUsers();
 });
 </script>
 

@@ -1,4 +1,4 @@
-import { useAuthStore } from "../stores/auth/auth.store";
+import { useAuthStore, deleteSession } from "../stores/auth/auth.store";
 
 const _GET = 'GET';
 const _POST = 'POST';
@@ -48,8 +48,8 @@ const handleResponse = async (res) => {
     const isJSON = res.headers?.get('Content-Type')?.includes('application/json');
     const data = isJSON ? await res.json() : null;
     if (!res.ok) {
-        const { user, logout } = useAuthStore();
-        if ([401, 403].includes(res.status) && !!user) logout();
+        const { user } = useAuthStore();
+        if ([401, 403].includes(res.status) && !!user) deleteSession();
 
         const err = {
             ok: false, 
